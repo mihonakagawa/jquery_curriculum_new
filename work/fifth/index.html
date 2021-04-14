@@ -100,29 +100,23 @@
 
       $(function() {
         $('.select').change(function () {
-          $('.list').find('li').hide();
-        })
-      })
+          var selectLanguage = $(this).val();//selectタグのどの値が選択されたか
+          show(selectLanguage);//実引数selectLanguage
+        });
+        function show(select) {
+          $('.list').children().each(function() {
+            var dataType = $(this).data('category-type');
+            if (select === 'all') {
+              $(this).show();
+            } else if (select === dataType) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        }
+      });
 
-
-
-      // $(function() {
-      //   $('.select').change(function() {
-      //     var dataType = $(this).children().val();
-      //     if(dataType === 'all') {
-      //       $('.list').find('li').show();
-      //     } else {
-      //       $('.list').find('li').hide();
-      //       $('.list').find('li').data(dataType).show();
-      //     };
-      //     // $.each(this, function() {
-      //     // });
-      //   });
-        // $('.select').children().click(function() {
-        //   var dataType = $(this).children().value();
-        //   $('.list').children().hide().eq(dataType).show();
-        // });
-      // });
     </script>
   </body>
 </html>
