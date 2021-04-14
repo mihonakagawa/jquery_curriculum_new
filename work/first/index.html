@@ -74,21 +74,23 @@ $(function() {
   $('#q1').css('color', 'red');
   
   // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
-  $('#q2').click(function(){
+  $('#q2').click(function() {
     $(this).css('background-color', 'pink');
   });
+  //別解
+  // $('#q2').on('click', function() {
+  //   $(this).css('background-color', 'pink');
+  // });
   
   // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
-
-  // $('#q3').on('click', function() {
-  //   $(this).fadeOut(2000);
-  // });
-  //別解
-
-  $('#q3').click(fadeOut);
-  function fadeOut() {
+  $('#q3').click(function() {
     $(this).fadeOut(2000);
-  };
+  });
+  //別解
+  // $('#q3').click(fadeOut);
+  // function fadeOut() {
+  //   $(this).fadeOut(2000);
+  // };
   
   // 第4問  id='q4'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
   $('#q4').click(function() {
