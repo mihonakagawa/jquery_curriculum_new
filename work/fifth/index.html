@@ -98,15 +98,22 @@
       // .change() セレクトボックスの値の変更をキャッチする関数
       // $().each() DOM要素を1つずつループ処理をする（ループ内で$(this)を使うと要素がひとつずつ取得できる）
 
+
       $(function() {
         $('.select').change(function () {
-          var selectLanguage = $(this).val();//selectタグのどの値が選択されたか
-          show(selectLanguage);//実引数selectLanguage
+          var selectLanguage = $(this).val();
+          show(selectLanguage);
         });
+
+        $.each('list', function(index, li){
+          
+        })
+
         function show(select) {
-          $('.list').children().each(function() {
+          $('.list').children().each(function(index, li) {
+            console.log();
             var dataType = $(this).data('category-type');
-            if (select === 'all') {
+            if (select=== 'all') {
               $(this).show();
             } else if (select === dataType) {
               $(this).show();
@@ -117,6 +124,48 @@
         }
       });
 
+
+
+
+
+      // $(function() {
+      //   $('.select').change(function () {
+      //     var selectLanguage = $(this).val();
+      //     show(selectLanguage);
+      //   });
+      //   function show(select) {
+      //     $('.list').children().each(function() {
+      //       var dataType = $(this).data('category-type');
+      //     });
+      //     if (select=== 'all') {
+      //       $(this).show();
+      //     } else if (select === dataType) {
+      //       $(this).show();
+      //     } else {
+      //       $(this).hide();
+      //     }
+      //   }
+      // });
+
+
+
+      // $(function() {
+      //   $('.select').change(function() {
+      //     var dataType = $(this).children().val();
+      //     if(dataType === 'all') {
+      //       $('.list').find('li').show();
+      //     } else {
+      //       $('.list').find('li').hide();
+      //       $('.list').find('li').data(dataType).show();
+      //     };
+      //     // $.each(this, function() {
+      //     // });
+      //   });
+      //   $('.select').children().click(function() {
+      //     var dataType = $(this).children().value();
+      //     $('.list').children().hide().eq(dataType).show();
+      //   });
+      // });
     </script>
   </body>
 </html>

@@ -57,13 +57,44 @@
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
 
-      $(function () {
-        $('.menu__list__title').hover(function() {
-          $(this).next().stop().slideDown();
-        }, function () {
-          $(this).next().stop().slideUp();
+
+      $(function() {
+        $('.menu__list').children().hover(function() {
+          $(this).children().stop().slideDown();
+        }, function() {
+          $('.menu__list__childList').stop().slideUp();
         });
       });
+
+      //別解
+      
+      // $(function() {
+      //   $('.menu__list > li').hover(function() {
+      //     $(this).children().stop().slideDown();
+      //   }, function() {
+      //     $('.menu__list__childList').stop().slideUp();
+      //   });
+      // });
+
+
+
+      //誤り↓
+
+      // $(function() {
+      //   $('.menu__list').find('li').hover(function() {
+      //     $(this).children().stop().slideDown();
+      //   }, function() {
+      //     $('.menu__list__childList').stop().slideUp();
+      //   });
+      // });
+
+      // $(function () {
+      //   $('.menu__list__title').hover(function() {
+      //     $(this).next().stop().slideDown();
+      //   }, function () {
+      //     $(this).next().stop().slideUp();
+      //   });
+      // });
 
       //stop() →引数を指定しないことで現在再生しているアニメーションを停止
       //stop()の引数：
