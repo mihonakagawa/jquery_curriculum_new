@@ -59,23 +59,14 @@
 
       $(function () {
         $('.menu__list__title').hover(function() {
-          $('.menu__list__childList').slideDown(1000);
-          $('.menu__list__childList').stop();
+          $(this).next().stop().slideDown();
         }, function () {
-          $('.menu__list__childList').slideUp();
+          $(this).next().stop().slideUp();
         });
       });
 
-      // $(function() {
-      //   $('.menu__list__title').hover(function() {
-      //     $('ul:not(:animated), this').next().children().slideDown();
-      //     // $(.next(this)).stop();
-      //   }, function() {
-      //     $(this).next().children().slideUp();
-
-
-      //   });
-      // });
+      // 第一引数 現在のアニメーションをゴールまでジャンプさせるか否か
+      // 第二引数 待機状態のアニメーションを破棄するか否か
     </script>
   </body>
 </html>
