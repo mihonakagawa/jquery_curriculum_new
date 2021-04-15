@@ -100,32 +100,111 @@
 
 
       $(function() {
-        $('.select').change(function () {
-          var selectLanguage = $(this).val();
-          show(selectLanguage);
+        $('.select').change(function() {
+          var select_val = $(this).val();
+          // console.log(select_val);
+          if(select_val === 'all') {
+            $('.list li').show();
+          } else {
+            $.each($('.list li'), function(i,data) {
+              var dataType = $(data).data('category-type');
+              // console.log(dataType);
+              if(dataType === select_val) {
+                $(this).show();
+              } else {
+                $(this).hide();
+              }
+            });
+          }
         });
-
-        $.each('list', function(index, li){
-          
-        })
-
-        function show(select) {
-          $('.list').children().each(function(index, li) {
-            console.log();
-            var dataType = $(this).data('category-type');
-            if (select=== 'all') {
-              $(this).show();
-            } else if (select === dataType) {
-              $(this).show();
-            } else {
-              $(this).hide();
-            }
-          });
-        }
       });
 
 
+      // $(function() {
+      //   $('.select').change(function() {
+      //     var select_val = $(this).val();
+      //     var select_data = 'data-' + select_val;
+      //     $.each($('li'), function getData(i, data) {
+      //       // $(data).data('category-type');
+      //       var dataType = $(data).data('category-type');
+      //       $('.list li').hide();
+      //       show(select_data);
+      //       // console.log(dataType);
+      //       // console.log($(data).data('category-type'));
+      //       // console.log($(this).data('category-type'));
+      //     })
+      //     if (select_val === 'all') {
+      //       $('.list li').show(select_data);
+      //     ) else if (select_val === select_data) {
+      //       $(select_data).show();
+      //     } else {
+      //       $('').hide();
+      //     }
+      //     // console.log(select);
+      //     // show(dataType);
+      //     // function show(dataType) {
+      //     // }
+      //   // });
+      // });
 
+
+      // $(function() {
+      //   $('.select').change(function() {
+      //     var select = $(this).val();
+      //     // console.log(select);
+      //     if ((select === 'all') || (select === dataType)) {
+      //       $('.list li').show();
+      //     } else {
+      //       $('.list li').hide();
+      //     }
+      //     show(dataType);
+      //     $.each($('li'), function getData(i, data) {
+      //       // $(data).data('category-type');
+      //       var dataType = $(data).data('category-type');
+      //       show(dataType);
+      //       // console.log(dataType);
+      //       // console.log($(data).data('category-type'));
+      //       // console.log($(this).data('category-type'));
+      //     })
+      //     function show(dataType) {
+      //     }
+      //   });
+      // });
+
+      // $(function() {
+      //   $('.select').change(function () {
+      //     var selectLanguage = $(this).val();
+      //     show(selectLanguage);
+      //   });
+      //   function show(select) {
+      //     $.each('.list li', function() {
+      //       var dataType = $(this).data('category-type');
+      //       if ((select === 'all') || (select === dataType)) {
+      //           $(this).show();
+      //         } else {
+      //           $(this).hide();
+      //         }
+      //     });
+      //   }
+      // });
+
+      // $(function() {
+      //   $('.select').change(function () {
+      //     var selectLanguage = $(this).val();
+      //     show(selectLanguage);
+      //   });
+      //   function show(select) {
+      //     $('.list').children().each(function() {
+      //       console.log();
+      //       var dataType = $(this).data('category-type');
+      //       if ((select=== 'all') || (select === dataType)) {
+      //         $(this).show();
+      //       } else {
+      //         $(this).hide();
+      //       }
+      //     });
+      //   }
+      // });
 
 
       // $(function() {
@@ -136,35 +215,13 @@
       //   function show(select) {
       //     $('.list').children().each(function() {
       //       var dataType = $(this).data('category-type');
+      //       if ((select=== 'all') || (select === dataType)) {
+      //           $(this).show();
+      //         } else {
+      //           $(this).hide();
+      //         }
       //     });
-      //     if (select=== 'all') {
-      //       $(this).show();
-      //     } else if (select === dataType) {
-      //       $(this).show();
-      //     } else {
-      //       $(this).hide();
-      //     }
       //   }
-      // });
-
-
-
-      // $(function() {
-      //   $('.select').change(function() {
-      //     var dataType = $(this).children().val();
-      //     if(dataType === 'all') {
-      //       $('.list').find('li').show();
-      //     } else {
-      //       $('.list').find('li').hide();
-      //       $('.list').find('li').data(dataType).show();
-      //     };
-      //     // $.each(this, function() {
-      //     // });
-      //   });
-      //   $('.select').children().click(function() {
-      //     var dataType = $(this).children().value();
-      //     $('.list').children().hide().eq(dataType).show();
-      //   });
       // });
     </script>
   </body>
