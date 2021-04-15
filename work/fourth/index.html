@@ -60,14 +60,14 @@
 
       $(function() {
         $('.menu__list').children().hover(function() {
-          $(this).children().stop().slideDown();
+          $(this).children('ul').stop().slideDown();
         }, function() {
-          $('.menu__list__childList').stop().slideUp();
+          $(this).children('ul').stop().slideUp();
         });
       });
 
-      //別解
-      
+      // 別解
+
       // $(function() {
       //   $('.menu__list > li').hover(function() {
       //     $(this).children().stop().slideDown();
