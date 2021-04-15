@@ -59,7 +59,7 @@
 
 
       $(function() {
-        $('.menu__list').children().hover(function() {
+        $('.menu__list').children('li').hover(function() {
           $(this).children('ul').stop().slideDown();
         }, function() {
           $(this).children('ul').stop().slideUp();
