@@ -28,31 +28,24 @@
     <script src="../../common/js/jquery.js"></script>
     <script src="./js/appid.js"></script>
     <script>
-
       $(function() {
+
         $('.search__btn').on('click', function(e) {
+          var keyword = $('.search__text__input').val();
+          var currentPage = 1
           e.preventDefault();//aタグのリンク先遷移防止
           $('.lists').empty();
           //onclick属性はJqueryで途中から追加されたHTML要素を検出できる
-          var keyword = $('.search__text__input').val();
           // console.log(keyword);//正常に出力可
           if(keyword == '') {
-          $('.message').append('<p class="error_message">検索文字が入力されていません。</p>');
-        } else {
-          Ajax(keyword);
-        }
+            $('.message').append('<p class="error_message">検索文字が入力されていません。</p>');
+          } else {
+            Ajax(keyword);
+          }
+          return false;
         });
 
-        $('.btn-item').on('click', function(e) {
-          console.log('pager click!')
-          e.preventDefault();//aタグのリンク先遷移防止
-          // $('.lists').empty();
-          // $('.pager').remove();
-          createPager(data);
-
-        })
-
-        function Ajax(keyword) {
+        function Ajax(keyword,currentPage) {
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
@@ -60,16 +53,15 @@
           data: {
             applicationId: appId,
             booksGenreId: '001',
-            page: 1,
+            page: currentPage,
             hits: 20,
             keyword: keyword,
-            // datatype:JSON///応答データ種類
           }
         }).done(function(data) {
           $('.lists').empty();
-          $('.pager').remove();
+          // $('.pager').remove();
           // console.log(data.Items);//Itemsであれば出力可
-          // console.log(data);
+          console.log(data);
           if (data.count == 0) {
             $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>')
           } else if (data.count > 0) {
@@ -80,6 +72,7 @@
             });
             // console.log(data);//正常に出力可
             createPager(data);
+            clickPagerBtn(data);
           }
         }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
           if(XMLHttpRequest == '429') {
@@ -87,49 +80,91 @@
           } else {
             $('.message').append('<p class="error_message">システムエラーです。</p>');
           }
-          // $('.message').append('<p class="error_message"></p>');
           console.log("XMLHttpRequest : " + XMLHttpRequest.status);
           console.log("textStatus : " + textStatus);
           console.log("errorThrown : " + errorThrown.message);
-          // ・XMLHttpRequest.status：HTTPリクエストのステータスの取得
-          // ・textStatus：タイムアウト、パースエラー等のエラー情報の取得
-          // ・errorThrown.message：例外情報の取得
+          // XMLHttpRequest.status：HTTPリクエストのステータスの取得
+          // textStatus：タイムアウト、パースエラー等のエラー情報の取得
+          // errorThrown.message：例外情報の取得
         })
         }
 
       function addEachList (item) {
-          $('.lists').append('<li class="lists__item"><div class="lists__item__inner"><a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' + '<img src="' + item.Item.largeImageUrl + '"class="lists__item__img" alt="">' + '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p><p class="lists__item__detail">' + "作者：" + item.Item.author + '</p><p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p></a></div></li>');
-        }
+          $('.lists').append(
+            '<li class="lists__item"><div class="lists__item__inner"><a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' + '<img src="' + item.Item.largeImageUrl + '"class="lists__item__img" alt="">' + '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p><p class="lists__item__detail">' + "作者：" + item.Item.author + '</p><p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p></a></div></li>'
+          );
+      }
 
-        function beDisabled(pagerBtn) {
-          pagerBtn.addClass('disabled');
-        }
+      function beDisabled(pagerBtn) {
+        pagerBtn.addClass('disabled');
+        // return false;
+      }
 
-        function createPager (pageData) {
-          $('.lists').after('<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' + pageData.page + '</span>' + "/" + '<span class="counter-all">' + pageData.pageCount + '</span></div>' + '<div class="btn-wrapper">' + '<a class="btn-item" data-js="page-prev" href="">' + "前へ" + '</a>' +'<a class="btn-item" data-js="page-next" href="">' + "次へ" + '</a></div><div>');
-            
-          if (pageData.pageCount === 1) {//総ページ数が1の時
-            //どっちも押せない
-            $('.btn-item').addClass('disabled');
-            // beDisabled($('.btn-item'));
-          } else {//総ページ数が２以上の時
-            if (pageData.page === 1 ) {//現在のページ:1
-              //前のページのみ押せない
-              beDisabled($('a[data-js="page-prev"]'));
-            } else if (pageData.last === pageData.count || pageData.last === 2000) {//現在のページ:最後
-              //次のページのみ押せない
-              beDisabled($('a[data-js="page-next"]'));
-            } else {//現在のページ:2以上
-              //両方押せる
-            };
+      function createPager (pageData) {
+        $('.lists').after(
+          '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' + pageData.page + '</span>' + "/" + '<span class="counter-all">' + pageData.pageCount + '</span></div>' + '<div class="btn-wrapper">' + '<a class="btn-item" data-js="page-prev" href="">' + "前へ" + '</a>' +'<a class="btn-item" data-js="page-next" href="">' + "次へ" + '</a></div><div>'
+        );
+        if (pageData.pageCount === 1) {//総ページ数が1の時
+          //どっちも押せない
+          $('.btn-item').addClass('disabled');
+          // beDisabled($('.btn-item'));
+        } else {//総ページ数が２以上の時
+          if (pageData.page === 1 ) {//現在のページ:1
+            //前のページのみ押せない
+            beDisabled($('a[data-js="page-prev"]'));
+          } else if (pageData.last === pageData.count || pageData.last === 2000) {//現在のページ:最後
+            //次のページのみ押せない
+            beDisabled($('a[data-js="page-next"]'));
+          } else {//現在のページ:2以上
+            //両方押せる
+          };
+        }
+      }
+
+      function clickPagerBtn (pageData) {
+        var keyword = $('.search__text__input').val();
+        var currentPage = pageData.page++;
+        $('.btn-item').on('click', function(e) {
+          console.log('pager click!');
+          console.log(pageData.page);
+          e.preventDefault();//aタグのリンク先遷移防止
+          $('.lists').empty();
+          $('.pager').remove();
+          // $('a').click(function(){
+          //   return false;//リンク無効
+          // })
+
+        $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+          type: 'GET',
+          datatype: 'json',
+          data: {
+            applicationId: appId,
+            booksGenreId: '001',
+            page: currentPage,
+            hits: 20,
+            keyword: keyword,
           }
-        }
+        }).done (function(data) {
+          createPager(data);
+          $.each(data.Items, function(i, item){
+              // console.log(item);//I正常に出力可
+              addEachList(item);
+          });
+        })
+
+
+        })
+      }
 
 
 
 
 
 
+
+
+      
 
 
 
@@ -149,122 +184,122 @@
 
     });
 
-      // 楽天ブックスの総合検索APIを使って製作してください。
-      // answerの挙動を良く見てね！
-      //
-      // 下記URLにAPIの仕様が載っているので、ブラウザで開いて参考にしてください。
-      // https://webservice.rakuten.co.jp/api/bookstotalsearch/
-      //
-      //
-      // [使うメソッド]
-      // e.preventDefault イベントをキャンセルするためのメソッド。今回はaタグの遷移を無効化します。
-      // on('click') onメソッドを使うことで、動的に出力される要素に対してもイベント登録が行えます。
-      // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理が行えます。
-      // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
-      // 以下は今回使う$.ajaxの基本的な形です。
-      //
-      // $.ajax({
-      //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-      //   type: 'GET',
-      //   datatype: 'json',
-      //   data: {
-      //     // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-      //     applicationId: appId, (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
-      //     booksGenreId: '001'
-      //   },
-      // }).done(function(data) {
-      //   // この中にデータ取得後の動きを記述していきます。
-      //   console.log(data);
-      // });
-      //
-      //
-      // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
-      // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
-      // <li class="lists__item">
-      //  <div class="lists__item__inner">
-      //    <a href="" class="lists__item__link" target="_blank">
-      //      <img src="" class="lists__item__img" alt="">
-      //      <p class="lists__item__detail">作品名：</p>
-      //      <p class="lists__item__detail">作者　：</p>
-      //      <p class="lists__item__detail">出版社：</p>
-      //    </a>
-      //  </div>
-      // </li>
-      //
-      // 取得できた書籍の件数をもとに、ページャを作成しましょう
-      // ページャーとは、ページネーションまたはページ送りという意味で、「書物に枚数やページ数をつけること」
-      // ページャの条件
-      // ├ 「現在のページ数」と「全てのページ数」が表示されている
-      // ├ 「前へ」と「次へ」のボタンがある
-      // ├ 1ページ目では「前へ」に、最後のページでは「次へ」にdisabledクラスをつけて非活性（使用不能）にする
-      // └ 1ページしかない場合はどちらもdisabledクラスをつけて非活性にする
-      //
-      // ページャのテンプレート
-      // <div class="pager" data-js="pager">
-      //   <div class="counter">
-      //     <span class="counter-current"></span>/<span class="counter-all"></span>
-      //   </div>
-      //   <div class="btn-wrapper">
-        //     <a class="btn-item" data-js="page-prev" href="">前へ</a>
-      //     <a class="btn-item" data-js="page-next" href="">次へ</a>
-      //   </div>
-      // </div>
-      
-      // url: 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&applicationId=' + APPID +
-      //         '&shopCode=' + SHOP_CODE + //店舗を指定しない場合は不要
-      //         '&keyword=' + KEYWORD +
-      //         '&sort=' + SORT +
-      //         '&page=' + page,
+    
+    // 楽天ブックスの総合検索APIを使って製作してください。
+    // answerの挙動を良く見てね！
+    //
+    // 下記URLにAPIの仕様が載っているので、ブラウザで開いて参考にしてください。
+    // https://webservice.rakuten.co.jp/api/bookstotalsearch/
+    //
+    //
+    // [使うメソッド]
+    // e.preventDefault イベントをキャンセルするためのメソッド。今回はaタグの遷移を無効化します。
+    // on('click') onメソッドを使うことで、動的に出力される要素に対してもイベント登録が行えます。
+    // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理が行えます。
+    // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
+    // 以下は今回使う$.ajaxの基本的な形です。
+    //
+    // $.ajax({
+    //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+    //   type: 'GET',
+    //   datatype: 'json',
+    //   data: {
+    //     // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+    //     applicationId: appId, (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
+    //     booksGenreId: '001'
+    //   },
+    // }).done(function(data) {
+    //   // この中にデータ取得後の動きを記述していきます。
+    //   console.log(data);
+    // });
+    //
+    //
+    // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
+    // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
+    // <li class="lists__item">
+    //  <div class="lists__item__inner">
+    //    <a href="" class="lists__item__link" target="_blank">
+    //      <img src="" class="lists__item__img" alt="">
+    //      <p class="lists__item__detail">作品名：</p>
+    //      <p class="lists__item__detail">作者　：</p>
+    //      <p class="lists__item__detail">出版社：</p>
+    //    </a>
+    //  </div>
+    // </li>
+    //
+    // 取得できた書籍の件数をもとに、ページャを作成しましょう
+    // ページャーとは、ページネーションまたはページ送りという意味で、「書物に枚数やページ数をつけること」
+    // ページャの条件
+    // ├ 「現在のページ数」と「全てのページ数」が表示されている
+    // ├ 「前へ」と「次へ」のボタンがある
+    // ├ 1ページ目では「前へ」に、最後のページでは「次へ」にdisabledクラスをつけて非活性（使用不能）にする
+    // └ 1ページしかない場合はどちらもdisabledクラスをつけて非活性にする
+    //
+    // ページャのテンプレート
+    // <div class="pager" data-js="pager">
+    //   <div class="counter">
+    //     <span class="counter-current"></span>/<span class="counter-all"></span>
+    //   </div>
+    //   <div class="btn-wrapper">
+      //     <a class="btn-item" data-js="page-prev" href="">前へ</a>
+    //     <a class="btn-item" data-js="page-next" href="">次へ</a>
+    //   </div>
+    // </div>
+    
+    // url: 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&applicationId=' + APPID +
+    //         '&shopCode=' + SHOP_CODE + //店舗を指定しない場合は不要
+    //         '&keyword=' + KEYWORD +
+    //         '&sort=' + SORT +
+    //         '&page=' + page,
 
-      // URL:
-      // https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?applicationId=[変数appId]
-      // &keyword=[変数keyWord]
-      // &sort=[standard]
+    // URL:
+    // https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?applicationId=[変数appId]
+    // &keyword=[変数keyWord]
+    // &sort=[standard]
 
 
 
-          // $.ajax({
-          //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-          //   type: 'GET',
-          //   datatype: 'json',
-          //   data: {
-          //     applicationId: appId,
-          //     booksGenreId: '001',
-          //     page: 1,
-          //     hits: 20,
-          //     keyword: keyWord,
-          //   }
-          // }).done(function(data) {
-          //   // $('.lists').empty();
-          //   $each(data.Items, function(i, item) {
-          //       console.log(item);
-          //       // addEachList(item);
+        // $.ajax({
+        //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+        //   type: 'GET',
+        //   datatype: 'json',
+        //   data: {
+        //     applicationId: appId,
+        //     booksGenreId: '001',
+        //     page: 1,
+        //     hits: 20,
+        //     keyword: keyWord,
+        //   }
+        // }).done(function(data) {
+        //   // $('.lists').empty();
+        //   $each(data.Items, function(i, item) {
+        //       console.log(item);
+        //       // addEachList(item);
 
-          //     });
-          //   // console.log(data.Items);//Itemsであれば出力可
-          //   // console.log(data);
-          //   if (data.count == 0) {
-          //     $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>')
-          //   } else if (data.count < 20) {
-          //     // if(data.hits > 20) {
-          //     //   createPager(data);
-          //     // }
-          //   }
-          // }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-          //   if(XMLHttpRequest == '429') {
-          //     $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-          //   } else {
-          //     $('.message').append('<p class="error_message">システムエラーです。</p>');
-          //   }
-          //   // $('.message').append('<p class="error_message"></p>');
-          //   console.log("XMLHttpRequest : " + XMLHttpRequest.status);
-          //   console.log("textStatus : " + textStatus);
-          //   console.log("errorThrown : " + errorThrown.message);
-          //   // ・XMLHttpRequest.status：HTTPリクエストのステータスの取得
-          //   // ・textStatus：タイムアウト、パースエラー等のエラー情報の取得
-          //   // ・errorThrown.message：例外情報の取得
-          // })
-
+        //     });
+        //   // console.log(data.Items);//Itemsであれば出力可
+        //   // console.log(data);
+        //   if (data.count == 0) {
+        //     $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>')
+        //   } else if (data.count < 20) {
+        //     // if(data.hits > 20) {
+        //     //   createPager(data);
+        //     // }
+        //   }
+        // }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+        //   if(XMLHttpRequest == '429') {
+        //     $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
+        //   } else {
+        //     $('.message').append('<p class="error_message">システムエラーです。</p>');
+        //   }
+        //   // $('.message').append('<p class="error_message"></p>');
+        //   console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+        //   console.log("textStatus : " + textStatus);
+        //   console.log("errorThrown : " + errorThrown.message);
+        //   // ・XMLHttpRequest.status：HTTPリクエストのステータスの取得
+        //   // ・textStatus：タイムアウト、パースエラー等のエラー情報の取得
+        //   // ・errorThrown.message：例外情報の取得
+        // })
     </script>
   </body>
 </html>
