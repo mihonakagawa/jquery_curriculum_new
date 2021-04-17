@@ -77,8 +77,8 @@
         }).fail(function () {
           if(XMLHttpRequest == '429') {
             $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-          } else {
-            $('.message').append('<p class="error_message">システムエラーです。</p>');
+          } else if (XMLHttpRequest == '400'){
+            $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
           }
           console.log("XMLHttpRequest : " + XMLHttpRequest.status);
           console.log("textStatus : " + textStatus);
