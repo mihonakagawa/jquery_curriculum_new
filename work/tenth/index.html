@@ -34,15 +34,14 @@
           var keyword = $('.search__text__input').val();
           var currentPage = 1
           e.preventDefault();//aタグのリンク先遷移防止
-          $('.lists').empty();
+          $('.lists, .message').empty();
           //onclick属性はJqueryで途中から追加されたHTML要素を検出できる
           // console.log(keyword);//正常に出力可
           if(keyword == '') {
             $('.message').append('<p class="error_message">検索文字が入力されていません。</p>');
           } else {
-            Ajax(keyword);
+            Ajax(keyword, currentPage);
           }
-          return false;
         });
 
         function Ajax(keyword,currentPage) {
@@ -59,11 +58,11 @@
           }
         }).done(function(data) {
           $('.lists').empty();
-          // $('.pager').remove();
+          $('.pager').remove();
           // console.log(data.Items);//Itemsであれば出力可
           console.log(data);
           if (data.count == 0) {
-            $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>')
+            $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
           } else if (data.count > 0) {
             // console.log('count > 0');//I正常に出力可
             $.each(data.Items, function(i, item){
@@ -72,9 +71,10 @@
             });
             // console.log(data);//正常に出力可
             createPager(data);
-            clickPagerBtn(data);
+            clickNextPage(data);
+            clickPrevPage(data);
           }
-        }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+        }).fail(function () {
           if(XMLHttpRequest == '429') {
             $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
           } else {
@@ -90,14 +90,13 @@
         }
 
       function addEachList (item) {
-          $('.lists').append(
-            '<li class="lists__item"><div class="lists__item__inner"><a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' + '<img src="' + item.Item.largeImageUrl + '"class="lists__item__img" alt="">' + '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p><p class="lists__item__detail">' + "作者：" + item.Item.author + '</p><p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p></a></div></li>'
-          );
+        $('.lists').append(
+          '<li class="lists__item"><div class="lists__item__inner"><a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' + '<img src="' + item.Item.largeImageUrl + '"class="lists__item__img" alt="">' + '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p><p class="lists__item__detail">' + "作者：" + item.Item.author + '</p><p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p></a></div></li>'
+        );
       }
 
       function beDisabled(pagerBtn) {
         pagerBtn.addClass('disabled');
-        // return false;
       }
 
       function createPager (pageData) {
@@ -121,42 +120,41 @@
         }
       }
 
-      function clickPagerBtn (pageData) {
-        var keyword = $('.search__text__input').val();
-        var currentPage = pageData.page++;
-        $('.btn-item').on('click', function(e) {
-          console.log('pager click!');
-          console.log(pageData.page);
-          e.preventDefault();//aタグのリンク先遷移防止
-          $('.lists').empty();
-          $('.pager').remove();
-          // $('a').click(function(){
-          //   return false;//リンク無効
-          // })
-
-        $.ajax({
-            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-          type: 'GET',
-          datatype: 'json',
-          data: {
-            applicationId: appId,
-            booksGenreId: '001',
-            page: currentPage,
-            hits: 20,
-            keyword: keyword,
+      function clickNextPage (pageData) {
+        $('a[data-js="page-next"]').on('click', function(e) {
+          var keyword = $('.search__text__input').val();
+          var currentPage = pageData.page + 1;
+          var hasClass = $(this).hasClass('disabled');
+          if ( hasClass ) {
+            // console.log("hasClass!");
+            return false;//リンク無効
+          } else {
+            console.log('pager click!');
+            e.preventDefault();//aタグのリンク先遷移防止
+            $('.lists').empty();
+            $('.pager').remove();
+            Ajax(keyword, currentPage);
           }
-        }).done (function(data) {
-          createPager(data);
-          $.each(data.Items, function(i, item){
-              // console.log(item);//I正常に出力可
-              addEachList(item);
-          });
-        })
-
-
         })
       }
 
+      function clickPrevPage (pageData) {
+        $('a[data-js="page-prev"]').on('click', function(e) {
+          var keyword = $('.search__text__input').val();
+          var currentPage = pageData.page - 1;
+          var hasClass = $(this).hasClass('disabled');
+          if ( hasClass ) {
+            // console.log("hasClass!");
+            return false;//リンク無効
+          } else {
+            console.log('pager click!');
+            e.preventDefault();//aタグのリンク先遷移防止
+            $('.lists').empty();
+            $('.pager').remove();
+            Ajax(keyword, currentPage);
+          }
+        })
+      }
 
 
 
