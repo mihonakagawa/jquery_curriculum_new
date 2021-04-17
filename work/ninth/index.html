@@ -42,6 +42,56 @@
       // </li>
       //
       // このテンプレートに取得してきた中身を入れて表示します。
+
+      
+      
+      $.ajax({
+        url: './data.json',
+        type: 'GET',
+        cache: false,
+        dataType: 'Json',
+        data: {'colorName':'hexValue'},//連想配列（オブジェクト）なので{ key:value }
+        // data: $('form').serializeArray(),// フォーム要素の内容をハッシュ形式に変換
+        timeout: 5000,//timeoutに指定した時間（ms）が経過しても通信が完了しない場合、エラー処理が実行
+      })
+      .done(function(data) {
+        // var ajaxData = $(data).data(key, value);
+        console.log(data);
+        // $.each($('.colorList'), function appendList(List) {
+        //   $(List).append('<li class="colorList__item"><p class="colorList__title" style="background-color: ' + aaaaa + ';"></p></li>');
+        // });
+      })
+      .fail(function(data) {
+        console.log('通信失敗');
+      })
+      
+
+      // $.each($('.colorList'), function appendList(List) {
+      //   var aaaaa = $(List).data();
+      //   console.log(aaaaa);
+      //   $(List).append('<li class="colorList__item"><p class="colorList__title" style="background-color: ' + aaaaa + ';"></p></li>');
+      // });
+
+
+      // JSONファイルからデータを持ってきて画面に表示する
+      // $.ajax({
+      //   type: "get",
+      //   url: "test.json",
+      //   data: {name: 'chara'},
+      //   dataType: "json"
+      //   success: function(data, dataType){}
+      // });
+
+            //JSで書いた場合のajax：
+        // var xhr = new XMLHttpRequest();
+        // xhr.open(GET, './data.json');
+        // xhr.onreadystatechange = function() {
+        //   if(xhr.readyState === 4 && xhr.status === 200) {
+        //     //データを取得した後の処理を書く
+        //   }
+        // }
+        // xhr.send(null);
+
     </script>
   </body>
 </html>
