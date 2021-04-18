@@ -75,23 +75,11 @@
           }
         }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
           resetPage();
-          // var xhr = new XMLHttpRequest();
-
-          //   xhr.open("GET", "/favicon.ico");
-          //   xhr.send();
-
-          //   xhr.onload = () => {
-          //     console.log(xhr.response);
-          //   };
-
-          //   xhr.onerror = () => {
-          //     console.log("Network Error");
-          //   };
-
-          if(XMLHttpRequest == '429') {
+          if(XMLHttpRequest.status == '429') {
             $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-          } else if (Status == 'failed'){
-            $('.message').append('<p class="error_message">通信に失敗しました。</p>');
+
+          } else if (XMLHttpRequest.status == '0'){
+            $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
           }
           console.log("XMLHttpRequest : " + XMLHttpRequest.status);
           console.log("textStatus : " + textStatus);
@@ -119,7 +107,6 @@
         );
         if (pageData.pageCount === 1) {//総ページ数が1の時
           //どっちも押せない
-          // $('.btn-item').addClass('disabled');
           beDisabled($('.btn-item'));
         } else {//総ページ数が２以上の時
           if (pageData.page === 1 ) {//現在のページ:1
@@ -165,57 +152,10 @@
         })
       }
 
-
       function resetPage() {
         $('.lists, .message').empty();
         $('.pager').remove();
       }
-
-
-
-
-      // function isConnectNetwork(keyword){
-      //   return $.ajax({
-      //       type: "GET",
-      //       url: "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
-      //       applicationId: appId,
-      //       keyword: keyword,
-      //       timeout: 2000,
-      //       // asyn: false
-      //   }).responseJSON;
-
-      // }
-
-      // function ConnectErr(){
-      //   var jsonConnect = isConnectNetwork();
-      //   if( jsonConnect == undefined || !jsonConnect.result ){
-      //     $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
-      //       return false;
-      //   }
-      // }
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     });
 
     
