@@ -34,12 +34,13 @@
           var keyword = $('.search__text__input').val();
           var currentPage = 1
           e.preventDefault();//aタグのリンク先遷移防止
-          $('.lists, .message').empty();
+          resetPage();
           //onclick属性はJqueryで途中から追加されたHTML要素を検出できる
           // console.log(keyword);//正常に出力可
           if(keyword == '') {
             $('.message').append('<p class="error_message">検索文字が入力されていません。</p>');
           } else {
+            // ConnectErr(keyword, currentPage);
             Ajax(keyword, currentPage);
           }
         });
@@ -57,8 +58,7 @@
             keyword: keyword,
           }
         }).done(function(data) {
-          $('.lists').empty();
-          $('.pager').remove();
+          resetPage();
           // console.log(data.Items);//Itemsであれば出力可
           console.log(data);
           if (data.count == 0) {
@@ -71,14 +71,27 @@
             });
             // console.log(data);//正常に出力可
             createPager(data);
-            clickNextPage(data);
-            clickPrevPage(data);
+            clickPager(data);
           }
-        }).fail(function () {
+        }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+          resetPage();
+          // var xhr = new XMLHttpRequest();
+
+          //   xhr.open("GET", "/favicon.ico");
+          //   xhr.send();
+
+          //   xhr.onload = () => {
+          //     console.log(xhr.response);
+          //   };
+
+          //   xhr.onerror = () => {
+          //     console.log("Network Error");
+          //   };
+
           if(XMLHttpRequest == '429') {
             $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-          } else if (XMLHttpRequest == '400'){
-            $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
+          } else if (Status == 'failed'){
+            $('.message').append('<p class="error_message">通信に失敗しました。</p>');
           }
           console.log("XMLHttpRequest : " + XMLHttpRequest.status);
           console.log("textStatus : " + textStatus);
@@ -86,6 +99,7 @@
           // XMLHttpRequest.status：HTTPリクエストのステータスの取得
           // textStatus：タイムアウト、パースエラー等のエラー情報の取得
           // errorThrown.message：例外情報の取得
+
         })
         }
 
@@ -105,8 +119,8 @@
         );
         if (pageData.pageCount === 1) {//総ページ数が1の時
           //どっちも押せない
-          $('.btn-item').addClass('disabled');
-          // beDisabled($('.btn-item'));
+          // $('.btn-item').addClass('disabled');
+          beDisabled($('.btn-item'));
         } else {//総ページ数が２以上の時
           if (pageData.page === 1 ) {//現在のページ:1
             //前のページのみ押せない
@@ -120,7 +134,7 @@
         }
       }
 
-      function clickNextPage (pageData) {
+      function clickPager (pageData) {
         $('a[data-js="page-next"]').on('click', function(e) {
           var keyword = $('.search__text__input').val();
           var currentPage = pageData.page + 1;
@@ -131,14 +145,10 @@
           } else {
             console.log('pager click!');
             e.preventDefault();//aタグのリンク先遷移防止
-            $('.lists').empty();
-            $('.pager').remove();
+            resetPage();
             Ajax(keyword, currentPage);
           }
         })
-      }
-
-      function clickPrevPage (pageData) {
         $('a[data-js="page-prev"]').on('click', function(e) {
           var keyword = $('.search__text__input').val();
           var currentPage = pageData.page - 1;
@@ -149,14 +159,40 @@
           } else {
             console.log('pager click!');
             e.preventDefault();//aタグのリンク先遷移防止
-            $('.lists').empty();
-            $('.pager').remove();
+            resetPage();
             Ajax(keyword, currentPage);
           }
         })
       }
 
 
+      function resetPage() {
+        $('.lists, .message').empty();
+        $('.pager').remove();
+      }
+
+
+
+
+      // function isConnectNetwork(keyword){
+      //   return $.ajax({
+      //       type: "GET",
+      //       url: "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
+      //       applicationId: appId,
+      //       keyword: keyword,
+      //       timeout: 2000,
+      //       // asyn: false
+      //   }).responseJSON;
+
+      // }
+
+      // function ConnectErr(){
+      //   var jsonConnect = isConnectNetwork();
+      //   if( jsonConnect == undefined || !jsonConnect.result ){
+      //     $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
+      //       return false;
+      //   }
+      // }
 
 
 
