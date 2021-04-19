@@ -33,19 +33,15 @@
         $('.search__btn').on('click', function(e) {
           var keyword = $('.search__text__input').val();
           var currentPage = 1
-          e.preventDefault();//aタグのリンク先遷移防止
           resetPage();
-          //onclick属性はJqueryで途中から追加されたHTML要素を検出できる
-          // console.log(keyword);//正常に出力可
           if(keyword == '') {
             $('.message').append('<p class="error_message">検索文字が入力されていません。</p>');
           } else {
-            // ConnectErr(keyword, currentPage);
             Ajax(keyword, currentPage);
           }
         });
 
-        function Ajax(keyword,currentPage) {
+        function Ajax(keyword, currentPage) {
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
@@ -59,17 +55,12 @@
           }
         }).done(function(data) {
           resetPage();
-          // console.log(data.Items);//Itemsであれば出力可
-          console.log(data);
           if (data.count == 0) {
             $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
           } else if (data.count > 0) {
-            // console.log('count > 0');//I正常に出力可
             $.each(data.Items, function(i, item){
-              // console.log(item);//I正常に出力可
               addEachList(item);
             });
-            // console.log(data);//正常に出力可
             createPager(data);
             clickPager(data);
           }
@@ -81,13 +72,6 @@
           } else if (XMLHttpRequest.status == '0'){
             $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
           }
-          console.log("XMLHttpRequest : " + XMLHttpRequest.status);
-          console.log("textStatus : " + textStatus);
-          console.log("errorThrown : " + errorThrown.message);
-          // XMLHttpRequest.status：HTTPリクエストのステータスの取得
-          // textStatus：タイムアウト、パースエラー等のエラー情報の取得
-          // errorThrown.message：例外情報の取得
-
         })
         }
 
@@ -105,19 +89,14 @@
         $('.lists').after(
           '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' + pageData.page + '</span>' + "/" + '<span class="counter-all">' + pageData.pageCount + '</span></div>' + '<div class="btn-wrapper">' + '<a class="btn-item" data-js="page-prev" href="">' + "前へ" + '</a>' +'<a class="btn-item" data-js="page-next" href="">' + "次へ" + '</a></div><div>'
         );
-        if (pageData.pageCount === 1) {//総ページ数が1の時
-          //どっちも押せない
+        if (pageData.pageCount === 1) {
           beDisabled($('.btn-item'));
-        } else {//総ページ数が２以上の時
-          if (pageData.page === 1 ) {//現在のページ:1
-            //前のページのみ押せない
+        } else {
+          if (pageData.page === 1 ) {
             beDisabled($('a[data-js="page-prev"]'));
-          } else if (pageData.last === pageData.count || pageData.last === 2000) {//現在のページ:最後
-            //次のページのみ押せない
+          } else if (pageData.last === pageData.count || pageData.last === 2000) {
             beDisabled($('a[data-js="page-next"]'));
-          } else {//現在のページ:2以上
-            //両方押せる
-          };
+          }
         }
       }
 
@@ -127,10 +106,8 @@
           var currentPage = pageData.page + 1;
           var hasClass = $(this).hasClass('disabled');
           if ( hasClass ) {
-            // console.log("hasClass!");
             return false;//リンク無効
           } else {
-            console.log('pager click!');
             e.preventDefault();//aタグのリンク先遷移防止
             resetPage();
             Ajax(keyword, currentPage);
@@ -141,10 +118,8 @@
           var currentPage = pageData.page - 1;
           var hasClass = $(this).hasClass('disabled');
           if ( hasClass ) {
-            // console.log("hasClass!");
             return false;//リンク無効
           } else {
-            console.log('pager click!');
             e.preventDefault();//aタグのリンク先遷移防止
             resetPage();
             Ajax(keyword, currentPage);
@@ -219,61 +194,7 @@
     //     <a class="btn-item" data-js="page-next" href="">次へ</a>
     //   </div>
     // </div>
-    
-    // url: 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&applicationId=' + APPID +
-    //         '&shopCode=' + SHOP_CODE + //店舗を指定しない場合は不要
-    //         '&keyword=' + KEYWORD +
-    //         '&sort=' + SORT +
-    //         '&page=' + page,
 
-    // URL:
-    // https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?applicationId=[変数appId]
-    // &keyword=[変数keyWord]
-    // &sort=[standard]
-
-
-
-        // $.ajax({
-        //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-        //   type: 'GET',
-        //   datatype: 'json',
-        //   data: {
-        //     applicationId: appId,
-        //     booksGenreId: '001',
-        //     page: 1,
-        //     hits: 20,
-        //     keyword: keyWord,
-        //   }
-        // }).done(function(data) {
-        //   // $('.lists').empty();
-        //   $each(data.Items, function(i, item) {
-        //       console.log(item);
-        //       // addEachList(item);
-
-        //     });
-        //   // console.log(data.Items);//Itemsであれば出力可
-        //   // console.log(data);
-        //   if (data.count == 0) {
-        //     $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>')
-        //   } else if (data.count < 20) {
-        //     // if(data.hits > 20) {
-        //     //   createPager(data);
-        //     // }
-        //   }
-        // }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-        //   if(XMLHttpRequest == '429') {
-        //     $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-        //   } else {
-        //     $('.message').append('<p class="error_message">システムエラーです。</p>');
-        //   }
-        //   // $('.message').append('<p class="error_message"></p>');
-        //   console.log("XMLHttpRequest : " + XMLHttpRequest.status);
-        //   console.log("textStatus : " + textStatus);
-        //   console.log("errorThrown : " + errorThrown.message);
-        //   // ・XMLHttpRequest.status：HTTPリクエストのステータスの取得
-        //   // ・textStatus：タイムアウト、パースエラー等のエラー情報の取得
-        //   // ・errorThrown.message：例外情報の取得
-        // })
     </script>
   </body>
 </html>
