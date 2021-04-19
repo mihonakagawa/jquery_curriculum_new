@@ -41,6 +41,7 @@
           }
         });
 
+        // Ajax処理をする
         function Ajax(keyword, currentPage) {
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
@@ -55,36 +56,33 @@
           }
         }).done(function(data) {
           resetPage();
-          if (data.count == 0) {
+          if (data.count === 0) {
             $('.message').append('<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
-          } else if (data.count > 0) {
+          } else {
             $.each(data.Items, function(i, item){
               addEachList(item);
             });
             createPager(data);
             clickPager(data);
           }
-        }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        }).fail(function (XMLHttpRequest) {
           resetPage();
           if(XMLHttpRequest.status == '429') {
             $('.message').append('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>');
-
-          } else if (XMLHttpRequest.status == '0'){
+          } else if (XMLHttpRequest.status == '0') {
             $('.message').append('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>');
           }
         })
         }
 
+      //検索結果を表示する
       function addEachList (item) {
         $('.lists').append(
           '<li class="lists__item"><div class="lists__item__inner"><a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' + '<img src="' + item.Item.largeImageUrl + '"class="lists__item__img" alt="">' + '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p><p class="lists__item__detail">' + "作者：" + item.Item.author + '</p><p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p></a></div></li>'
         );
       }
 
-      function beDisabled(pagerBtn) {
-        pagerBtn.addClass('disabled');
-      }
-
+      //ページャを作る
       function createPager (pageData) {
         $('.lists').after(
           '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' + pageData.page + '</span>' + "/" + '<span class="counter-all">' + pageData.pageCount + '</span></div>' + '<div class="btn-wrapper">' + '<a class="btn-item" data-js="page-prev" href="">' + "前へ" + '</a>' +'<a class="btn-item" data-js="page-next" href="">' + "次へ" + '</a></div><div>'
@@ -100,15 +98,21 @@
         }
       }
 
-      function clickPager (pageData) {
+      //disabledクラスを付与する
+      function beDisabled(pagerBtn) {
+        pagerBtn.addClass('disabled');
+      }
+
+        //ページャをクリックした時の処理
+        function clickPager (pageData) {
         $('a[data-js="page-next"]').on('click', function(e) {
           var keyword = $('.search__text__input').val();
           var currentPage = pageData.page + 1;
           var hasClass = $(this).hasClass('disabled');
-          if ( hasClass ) {
-            return false;//リンク無効
+          if (hasClass) {
+            return false;
           } else {
-            e.preventDefault();//aタグのリンク先遷移防止
+            e.preventDefault();
             resetPage();
             Ajax(keyword, currentPage);
           }
@@ -117,16 +121,17 @@
           var keyword = $('.search__text__input').val();
           var currentPage = pageData.page - 1;
           var hasClass = $(this).hasClass('disabled');
-          if ( hasClass ) {
-            return false;//リンク無効
+          if (hasClass) {
+            return false;
           } else {
-            e.preventDefault();//aタグのリンク先遷移防止
+            e.preventDefault();
             resetPage();
             Ajax(keyword, currentPage);
           }
         })
       }
 
+      //ページのリセット
       function resetPage() {
         $('.lists, .message').empty();
         $('.pager').remove();
