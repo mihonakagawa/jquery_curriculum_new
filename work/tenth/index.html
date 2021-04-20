@@ -29,17 +29,17 @@
     <script src="./js/appid.js"></script>
     <script>
       $(function() {
-        
-        var keyword = ''
-        var currentPage = null
+
+      var keyword = ''
+      var currentPage = null
 
       // 検索ボタンをクリックした時
-        $('.search__btn').on('click', function(e) {
-          keyword = $('.search__text__input').val();
-          currentPage = 1
-          resetPage();
-          Ajax(keyword, currentPage);
-        });
+      $('.search__btn').on('click', function(e) {
+        keyword = $('.search__text__input').val();
+        currentPage = 1
+        resetPage();
+        Ajax(keyword, currentPage);
+      });
 
       // ページャをクリックした時
       function clickPager (pageData) {
@@ -69,9 +69,9 @@
         })
       }
 
-        // Ajax通信をする
-        function Ajax(keyword, currentPage) {
-          $.ajax({
+      // Ajax通信
+      function Ajax(keyword, currentPage) {
+        $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
           datatype: 'json',
@@ -83,7 +83,6 @@
             keyword: keyword,
           }
         }).done(function(data) {
-          // console.log(data.Items);
           addEachList(data.Items);
           createPager(data);
           clickPager(data);
@@ -91,19 +90,21 @@
           resetPage();
           var message = ''
           switch(data.status) {
-            case 0 :
+            case 0:
               message = '<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>'
               break;
-            case 400 :
+            case 400:
               message = '<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>'
               break;
-            case 429 :
+            case 429:
               message = '<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>'
               break;
+            default:
+              message = '<p class="error_message">予期せぬエラーが発生しました。</p>'
           }
           $('.message').append(message);
         })
-        }
+      }
 
       //検索結果を表示する
       function addEachList (item) {
@@ -162,34 +163,6 @@
 
     });
 
-      // ページャをクリックした時パターン２
-      //ボタン外をクリックしても反応してしまう
-        // $(document).on('click', $('a[data-js="page-next"]'), function (e) {
-        //   var keyword = $('.search__text__input').val();
-        //   var currentPage = $('.counter-current').text();
-        //   currentPage++
-        //   if ($('a[data-js="page-next"]').hasClass('disabled')) {
-        //     return false;
-        //   } else {
-        //     e.preventDefault();
-        //     resetPage();
-        //     Ajax(keyword, currentPage);
-        //   }
-        // })
-        // $(document).on('click', $('a[data-js="page-prev"]'), function (e) {
-        //   var keyword = $('.search__text__input').val();
-        //   var currentPage = $('.counter-current').text();
-        //   currentPage--
-        //   if ($('a[data-js="page-prev"]').hasClass('disabled')) {
-        //     return false;
-        //   } else {
-        //     e.preventDefault();
-        //     resetPage();
-        //     Ajax(keyword, currentPage);
-        //   }
-        // })
-
-    
     // 楽天ブックスの総合検索APIを使って製作してください。
     // answerの挙動を良く見てね！
     //
@@ -250,6 +223,33 @@
     //     <a class="btn-item" data-js="page-next" href="">次へ</a>
     //   </div>
     // </div>
+
+    // ページャをクリックした時パターン２
+    // ボタン外をクリックしても反応してしまう
+    // $(document).on('click', $('a[data-js="page-next"]'), function (e) {
+    //   var keyword = $('.search__text__input').val();
+    //   var currentPage = $('.counter-current').text();
+    //   currentPage++
+    //   if ($('a[data-js="page-next"]').hasClass('disabled')) {
+    //     return false;
+    //   } else {
+    //     e.preventDefault();
+    //     resetPage();
+    //     Ajax(keyword, currentPage);
+    //   }
+    // })
+    // $(document).on('click', $('a[data-js="page-prev"]'), function (e) {
+    //   var keyword = $('.search__text__input').val();
+    //   var currentPage = $('.counter-current').text();
+    //   currentPage--
+    //   if ($('a[data-js="page-prev"]').hasClass('disabled')) {
+    //     return false;
+    //   } else {
+    //     e.preventDefault();
+    //     resetPage();
+    //     Ajax(keyword, currentPage);
+    //   }
+    // })
 
     </script>
   </body>
