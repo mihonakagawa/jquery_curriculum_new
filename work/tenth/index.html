@@ -80,7 +80,6 @@
           })
           .done(function(data) {
             if (data.count === 0) {
-              resetPage();
               showMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
               return false;
             }
@@ -89,7 +88,6 @@
             showPager(data);
           })
           .fail(function(data) {
-            resetPage();
             alertError(data);
           })
         }
@@ -156,19 +154,16 @@
               '</div>' +
             '</div>'
           );
-          if (pageData.pageCount === 1) {
-            beDisabled($('.btn-item'));
-          } else if (pageData.page === 1) {
-            beDisabled($('a[data-js="page-prev"]'));
-          } else if (pageData.page === pageData.pagecount) {
-            beDisabled($('a[data-js="page-next"]'));
+          var FIRST_PAGE = 1//定数；大文字にする
+          if (pageData.page === FIRST_PAGE) {
+            $('a[data-js="page-prev"]').addClass('disabled');
+          }
+
+          if (pageData.page === pageData.pagecount) {
+            $('a[data-js="page-next"]').addClass('disabled');
           }
         }
 
-        //disabledクラスを付与する
-        function beDisabled(pagerBtn) {
-          pagerBtn.addClass('disabled');
-        }
       });
 
       // 楽天ブックスの総合検索APIを使って製作してください。
