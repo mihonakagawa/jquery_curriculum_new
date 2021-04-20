@@ -43,9 +43,9 @@
       function clickPager (pageData) {
         $('a[data-js="page-next"]').on('click', function(e) {
           var keyword = $('.search__text__input').val();
-          var currentPage = pageData.page + 1;
-          var hasClass = $(this).hasClass('disabled');
-          if (hasClass) {
+          var currentPage = $('.counter-current').text();
+          currentPage++
+          if ($(this).hasClass('disabled')) {
             return false;
           } else {
             e.preventDefault();
@@ -55,9 +55,9 @@
         })
         $('a[data-js="page-prev"]').on('click', function(e) {
           var keyword = $('.search__text__input').val();
-          var currentPage = pageData.page - 1;
-          var hasClass = $(this).hasClass('disabled');
-          if (hasClass) {
+          var currentPage = $('.counter-current').text();
+          currentPage--
+          if ($(this).hasClass('disabled')) {
             return false;
           } else {
             e.preventDefault();
