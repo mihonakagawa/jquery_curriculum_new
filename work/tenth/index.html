@@ -117,10 +117,10 @@
         }
 
         // 検索結果を表示する
-        function showBookList (item) {
+        function showBookList(item) {
           var bookList = ''
           $.each(item, function(i, item) {
-            bookList +=
+            bookList+=
               '<li class="lists__item">' +
                 '<div class="lists__item__inner">' +
                   '<a href="'+ item.Item.itemUrl +'" class="lists__item__link" target="_blank">' +
@@ -136,7 +136,7 @@
         }
 
         //ページャを表示する
-        function showPager (pageData) {
+        function showPager(pageData) {
           $('.lists').after(
             '<div class="pager" data-js="pager">' +
               '<div class="counter">' +
