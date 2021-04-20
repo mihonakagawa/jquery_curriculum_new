@@ -42,36 +42,6 @@
         });
 
         // ページャをクリックした時
-        // function clickPager (pageData) {
-        //   $('a[data-js="page-next"]').on('click', function(e) {
-        //     var keyword = $('.search__text__input').val();
-        //     var currentPage = $('.counter-current').text();
-        //     currentPage++
-        //     if ($(this).hasClass('disabled')) {
-        //       return false;
-        //     } else {
-        //       e.preventDefault();
-        //       resetPage();
-        //       Ajax(keyword, currentPage);
-        //     }
-        //   })
-        //   $('a[data-js="page-prev"]').on('click', function(e) {
-        //     var keyword = $('.search__text__input').val();
-        //     var currentPage = $('.counter-current').text();
-        //     currentPage--
-        //     if ($(this).hasClass('disabled')) {
-        //       return false;
-        //     } else {
-        //       e.preventDefault();
-        //       resetPage();
-        //       Ajax(keyword, currentPage);
-        //     }
-        //   })
-        // }
-
-        // ページャをクリックした時パターン２
-        // ボタン外をクリックしても反応してしまう
-        // a[data-js="page-next"]の指定の仕方が違う　→第二引数の値の$()外したら動きました
         $(document).on('click', '[data-js="page-next"]', function (e) {
           var keyword = $('.search__text__input').val();
           var currentPage = $('.counter-current').text();
@@ -112,9 +82,8 @@
             }
           })
           .done(function(data) {
-            addEachList(data.Items);
-            createPager(data);
-            // clickPager(data);
+            showBookList(data.Items);
+            showPager(data);
           })
           .fail(function(data) {
             resetPage();
@@ -130,19 +99,23 @@
                 break;
               default:
                 errorMessage('<p class="error_message">予期せぬエラーが発生しました。</p>')
-            }
-          })
+              }
+            })
+          }
+          
+        //ページのリセットをする
+        function resetPage() {
+          $('.lists, .message').empty();
+          $('.pager').remove();
         }
 
-
-        // エラーメッセージの表示
+        // エラーメッセージを表示する
         function errorMessage(message) {
           $('.message').append(message);
         }
 
-
         // 検索結果を表示する
-        function addEachList (item) {
+        function showBookList (item) {
           var bookList = ''
           $.each(item, function(i, item) {
             bookList +=
@@ -153,15 +126,15 @@
                     '<p class="lists__item__detail">作品名：' + item.Item.title + '</p>' +
                     '<p class="lists__item__detail">作者：' + item.Item.author + '</p>' +
                     '<p class="lists__item__detail">出版社：' + item.Item.publisherName + '</p>' +
-                  '</a>' +
+                    '</a>' +
                 '</div>' +
               '</li>';
           })
           $('.lists').append(bookList);
         }
 
-        //ページャを作る
-        function createPager (pageData) {
+        //ページャを表示する
+        function showPager (pageData) {
           $('.lists').after(
             '<div class="pager" data-js="pager">' +
               '<div class="counter">' +
@@ -192,11 +165,6 @@
           pagerBtn.addClass('disabled');
         }
         
-        //ページのリセット
-        function resetPage() {
-          $('.lists, .message').empty();
-          $('.pager').remove();
-        }
 
       });
 
