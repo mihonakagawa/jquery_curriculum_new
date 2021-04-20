@@ -31,6 +31,7 @@
       $(function() {
         var keyword = ''
         var currentPage = null
+        var message = ''
 
         // 検索ボタンをクリックした時
         $('.search__btn').on('click', function(e) {
@@ -41,32 +42,60 @@
         });
 
         // ページャをクリックした時
-        function clickPager (pageData) {
-          $('a[data-js="page-next"]').on('click', function(e) {
-            var keyword = $('.search__text__input').val();
-            var currentPage = $('.counter-current').text();
-            currentPage++
-            if ($(this).hasClass('disabled')) {
-              return false;
-            } else {
-              e.preventDefault();
-              resetPage();
-              Ajax(keyword, currentPage);
-            }
-          })
-          $('a[data-js="page-prev"]').on('click', function(e) {
-            var keyword = $('.search__text__input').val();
-            var currentPage = $('.counter-current').text();
-            currentPage--
-            if ($(this).hasClass('disabled')) {
-              return false;
-            } else {
-              e.preventDefault();
-              resetPage();
-              Ajax(keyword, currentPage);
-            }
-          })
-        }
+        // function clickPager (pageData) {
+        //   $('a[data-js="page-next"]').on('click', function(e) {
+        //     var keyword = $('.search__text__input').val();
+        //     var currentPage = $('.counter-current').text();
+        //     currentPage++
+        //     if ($(this).hasClass('disabled')) {
+        //       return false;
+        //     } else {
+        //       e.preventDefault();
+        //       resetPage();
+        //       Ajax(keyword, currentPage);
+        //     }
+        //   })
+        //   $('a[data-js="page-prev"]').on('click', function(e) {
+        //     var keyword = $('.search__text__input').val();
+        //     var currentPage = $('.counter-current').text();
+        //     currentPage--
+        //     if ($(this).hasClass('disabled')) {
+        //       return false;
+        //     } else {
+        //       e.preventDefault();
+        //       resetPage();
+        //       Ajax(keyword, currentPage);
+        //     }
+        //   })
+        // }
+
+        // ページャをクリックした時パターン２
+        // ボタン外をクリックしても反応してしまう
+        // a[data-js="page-next"]の指定の仕方が違う　→第二引数の値の$()外したら動きました
+        $(document).on('click', '[data-js="page-next"]', function (e) {
+          var keyword = $('.search__text__input').val();
+          var currentPage = $('.counter-current').text();
+          currentPage++
+          if ($('[data-js="page-next"]').hasClass('disabled')) {
+            return false;
+          } else {
+            e.preventDefault();
+            resetPage();
+            Ajax(keyword, currentPage);
+          }
+        })
+        $(document).on('click', '[data-js="page-prev"]', function (e) {
+          var keyword = $('.search__text__input').val();
+          var currentPage = $('.counter-current').text();
+          currentPage--
+          if ($('[data-js="page-prev"]').hasClass('disabled')) {
+            return false;
+          } else {
+            e.preventDefault();
+            resetPage();
+            Ajax(keyword, currentPage);
+          }
+        })
 
         // Ajax通信
         function Ajax(keyword, currentPage) {
@@ -85,44 +114,50 @@
           .done(function(data) {
             addEachList(data.Items);
             createPager(data);
-            clickPager(data);
+            // clickPager(data);
           })
           .fail(function(data) {
             resetPage();
-            var message = ''
             switch(data.status) {
               case 0:
-                message = '<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>'
+                errorMessage('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>')
                 break;
               case 400:
-                message = '<p class="error_message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>'
+                errorMessage('<p class="error_message">検索文字が入力されていません。</p>')
                 break;
               case 429:
-                message = '<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>'
+                errorMessage('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>')
                 break;
               default:
-                message = '<p class="error_message">予期せぬエラーが発生しました。</p>'
+                errorMessage('<p class="error_message">予期せぬエラーが発生しました。</p>')
             }
-            $('.message').append(message);
           })
         }
 
-        //検索結果を表示する
+
+        // エラーメッセージの表示
+        function errorMessage(message) {
+          $('.message').append(message);
+        }
+
+
+        // 検索結果を表示する
         function addEachList (item) {
-          var books = ''
-          var bookList = $.each(item, function(i, item){
-            books = '<li class="lists__item">' +
-                          '<div class="lists__item__inner">' +
-                            '<a href="' + item.Item.itemUrl +'" class="lists__item__link" target="_blank">' +
-                              '<img src="' + item.Item.largeImageUrl + '" class="lists__item__img" alt="">' +
-                              '<p class="lists__item__detail">' + "作品名：" + item.Item.title +'</p>' +
-                              '<p class="lists__item__detail">' + "作者：" + item.Item.author + '</p>' +
-                              '<p class="lists__item__detail">' + "出版社：" + item.Item.publisherName + '</p>' +
-                            '</a>' +
-                          '</div>' +
-                        '</li>'
-            $('.lists').append(books);
-          });
+          var bookList = ''
+          $.each(item, function(i, item) {
+            bookList +=
+              '<li class="lists__item">' +
+                '<div class="lists__item__inner">' +
+                  '<a href="'+ item.Item.itemUrl +'" class="lists__item__link" target="_blank">' +
+                    '<img src="' + item.Item.largeImageUrl + '" class="lists__item__img" alt="">' +
+                    '<p class="lists__item__detail">作品名：' + item.Item.title + '</p>' +
+                    '<p class="lists__item__detail">作者：' + item.Item.author + '</p>' +
+                    '<p class="lists__item__detail">出版社：' + item.Item.publisherName + '</p>' +
+                  '</a>' +
+                '</div>' +
+              '</li>';
+          })
+          $('.lists').append(bookList);
         }
 
         //ページャを作る
@@ -140,14 +175,15 @@
               '</div>' +
             '</div>'
           );
-          if (pageData.pageCount === 1) {
+          if (pageData.count === 0) {
+            resetPage();
+            errorMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+          } else if (pageData.pageCount === 1) {
             beDisabled($('.btn-item'));
-          } else {
-            if (pageData.page === 1 ) {
-              beDisabled($('a[data-js="page-prev"]'));
-            } else if (pageData.page === pageData.pagecount) {
-              beDisabled($('a[data-js="page-next"]'));
-            }
+          } else if (pageData.page === 1) {
+            beDisabled($('a[data-js="page-prev"]'));
+          } else if (pageData.page === pageData.pagecount) {
+            beDisabled($('a[data-js="page-next"]'));
           }
         }
 
@@ -224,33 +260,6 @@
       //     <a class="btn-item" data-js="page-next" href="">次へ</a>
       //   </div>
       // </div>
-
-      // ページャをクリックした時パターン２
-      // ボタン外をクリックしても反応してしまう
-      // $(document).on('click', $('a[data-js="page-next"]'), function (e) {
-      //   var keyword = $('.search__text__input').val();
-      //   var currentPage = $('.counter-current').text();
-      //   currentPage++
-      //   if ($('a[data-js="page-next"]').hasClass('disabled')) {
-      //     return false;
-      //   } else {
-      //     e.preventDefault();
-      //     resetPage();
-      //     Ajax(keyword, currentPage);
-      //   }
-      // })
-      // $(document).on('click', $('a[data-js="page-prev"]'), function (e) {
-      //   var keyword = $('.search__text__input').val();
-      //   var currentPage = $('.counter-current').text();
-      //   currentPage--
-      //   if ($('a[data-js="page-prev"]').hasClass('disabled')) {
-      //     return false;
-      //   } else {
-      //     e.preventDefault();
-      //     resetPage();
-      //     Ajax(keyword, currentPage);
-      //   }
-      // })
 
     </script>
   </body>
