@@ -41,7 +41,7 @@
           Ajax(keyword, currentPage);
         });
 
-        // ページャをクリックした時
+        //「 次へ」をクリックした時
         $(document).on('click', '[data-js="page-next"]', function (e) {
           var keyword = $('.search__text__input').val();
           var currentPage = $('.counter-current').text();
@@ -54,6 +54,8 @@
             Ajax(keyword, currentPage);
           }
         })
+
+        // 「前へ」ボタンをクリックした時
         $(document).on('click', '[data-js="page-prev"]', function (e) {
           var keyword = $('.search__text__input').val();
           var currentPage = $('.counter-current').text();
@@ -164,8 +166,6 @@
         function beDisabled(pagerBtn) {
           pagerBtn.addClass('disabled');
         }
-        
-
       });
 
       // 楽天ブックスの総合検索APIを使って製作してください。
