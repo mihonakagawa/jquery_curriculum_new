@@ -29,9 +29,11 @@
     <script src="./js/appid.js"></script>
     <script>
       $(function() {
+        
         var keyword = ''
         var currentPage = null
 
+      // 検索ボタンをクリックした時
         $('.search__btn').on('click', function(e) {
           keyword = $('.search__text__input').val();
           currentPage = 1
@@ -67,7 +69,7 @@
         })
       }
 
-        // Ajax処理をする
+        // Ajax通信をする
         function Ajax(keyword, currentPage) {
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
@@ -82,7 +84,6 @@
           }
         }).done(function(data) {
           // console.log(data.Items);
-          // resetPage();
           addEachList(data.Items);
           createPager(data);
           clickPager(data);
@@ -107,7 +108,6 @@
       //検索結果を表示する
       function addEachList (item) {
         var books = ''
-        // console.log(item);
         var bookList = $.each(item, function(i, item){
           books = '<li class="lists__item">' +
                         '<div class="lists__item__inner">' +
@@ -143,7 +143,7 @@
         } else {
           if (pageData.page === 1 ) {
             beDisabled($('a[data-js="page-prev"]'));
-          } else if (pageData.last === pageData.count || pageData.last === 2000) {
+          } else if (pageData.page === pageData.pagecount) {
             beDisabled($('a[data-js="page-next"]'));
           }
         }
@@ -159,41 +159,35 @@
         $('.lists, .message').empty();
         $('.pager').remove();
       }
+
     });
-      // ページャをクリックした時の処理パターン2---------------------
-      // if文で、現在のページとdatapageCount
-      // $(document).on('click', $('a[data-js="page-prev"]'), function (e) {
-      //   var hasClass = $(this).hasClass('disabled');
-      //   if (hasClass) {
-      //     return false;
-      //   } else {
-      //     keyword = $('.search__text__input').val();
-      //     counterCurrent = $('.counter-current').text
-      //     currentPage = counterCurrent--
-      //     // currentPage--
-      //     console.log(currentPage);
-      //     e.preventDefault();
-      //     resetPage();
-      //     Ajax(keyword, currentPage);
-      //   }
-      // })
 
-      // $(document).on('click', $('a[data-js="page-next"]'), function (e) {
-      //   var hasClass = $(this).hasClass('disabled');
-      //   if (hasClass) {
-      //     return false;
-      //   } else {
-      //     keyword = $('.search__text__input').val();
-      //     counterCurrent = $('.counter-current').text
-      //     currentPage = counterCurrent--
-      //     // currentPage++
-      //     console.log(currentPage);
-      //     e.preventDefault();
-      //     resetPage();
-      //     Ajax(keyword, currentPage);
-      //   }
-      // })
-
+      // ページャをクリックした時パターン２
+      //ボタン外をクリックしても反応してしまう
+        // $(document).on('click', $('a[data-js="page-next"]'), function (e) {
+        //   var keyword = $('.search__text__input').val();
+        //   var currentPage = $('.counter-current').text();
+        //   currentPage++
+        //   if ($('a[data-js="page-next"]').hasClass('disabled')) {
+        //     return false;
+        //   } else {
+        //     e.preventDefault();
+        //     resetPage();
+        //     Ajax(keyword, currentPage);
+        //   }
+        // })
+        // $(document).on('click', $('a[data-js="page-prev"]'), function (e) {
+        //   var keyword = $('.search__text__input').val();
+        //   var currentPage = $('.counter-current').text();
+        //   currentPage--
+        //   if ($('a[data-js="page-prev"]').hasClass('disabled')) {
+        //     return false;
+        //   } else {
+        //     e.preventDefault();
+        //     resetPage();
+        //     Ajax(keyword, currentPage);
+        //   }
+        // })
 
     
     // 楽天ブックスの総合検索APIを使って製作してください。
