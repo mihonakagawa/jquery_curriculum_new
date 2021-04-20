@@ -79,6 +79,12 @@
             }
           })
           .done(function(data) {
+            if (data.count === 0) {
+              resetPage();
+              showMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+              return false;
+            }
+
             showBookList(data.Items);
             showPager(data);
           })
@@ -150,10 +156,7 @@
               '</div>' +
             '</div>'
           );
-          if (pageData.count === 0) {
-            resetPage();
-            showMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
-          } else if (pageData.pageCount === 1) {
+          if (pageData.pageCount === 1) {
             beDisabled($('.btn-item'));
           } else if (pageData.page === 1) {
             beDisabled($('a[data-js="page-prev"]'));

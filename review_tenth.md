@@ -54,6 +54,16 @@
     }
 ```
 
+#### 4. 0件の時の処理の記載箇所を移動
+- function showBookList内に書いていた以下の処理を.done内に移動しました。
+ ```Javascript
+    if (data.count === 0) {
+      resetPage();
+      showMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+      return false;
+    }
+```
+
 
 
 
