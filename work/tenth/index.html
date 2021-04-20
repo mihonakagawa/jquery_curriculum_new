@@ -31,46 +31,41 @@
       $(function() {
         var keyword = ''
         var currentPage = null
-        var message = ''
 
         // 検索ボタンをクリックした時
         $('.search__btn').on('click', function(e) {
           keyword = $('.search__text__input').val();
           currentPage = 1
           resetPage();
-          Ajax(keyword, currentPage);
+          getBookData();
         });
 
         //「 次へ」ボタンをクリックした時
         $(document).on('click', '[data-js="page-next"]', function (e) {
-          keyword = $('.search__text__input').val();
-          currentPage = $('.counter-current').text();
-          currentPage++
+          e.preventDefault();
           if ($('[data-js="page-next"]').hasClass('disabled')) {
             return false;
-          } else {
-            e.preventDefault();
-            resetPage();
-            Ajax(keyword, currentPage);
           }
+
+          currentPage++
+          resetPage();
+          getBookData();
         })
 
         // 「前へ」ボタンをクリックした時
         $(document).on('click', '[data-js="page-prev"]', function (e) {
-          keyword = $('.search__text__input').val();
-          currentPage = $('.counter-current').text();
-          currentPage--
+          e.preventDefault();
           if ($('[data-js="page-prev"]').hasClass('disabled')) {
             return false;
-          } else {
-            e.preventDefault();
-            resetPage();
-            Ajax(keyword, currentPage);
           }
+
+          currentPage--
+          resetPage();
+          getBookData();
         })
 
-        // Ajax通信
-        function Ajax(keyword, currentPage) {
+        // 検索結果の表示
+        function getBookData() {
           $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
             type: 'GET',
@@ -89,30 +84,35 @@
           })
           .fail(function(data) {
             resetPage();
-            switch(data.status) {
-              case 0:
-                errorMessage('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>')
-                break;
-              case 400:
-                errorMessage('<p class="error_message">検索文字が入力されていません。</p>')
-                break;
-              case 429:
-                errorMessage('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>')
-                break;
-              default:
-                errorMessage('<p class="error_message">予期せぬエラーが発生しました。</p>')
-            }
+            alertError(data);
           })
         }
-          
+
         //ページのリセットをする
         function resetPage() {
           $('.lists, .message').empty();
           $('.pager').remove();
         }
 
-        // エラーメッセージを表示する
-        function errorMessage(message) {
+        // エラー時の処理
+        function alertError(data) {
+          switch(data.status) {
+            case 0:
+              showMessage('<p class="error_message">通信に失敗しました。インターネットの接続をご確認ください。</p>')
+              break;
+            case 400:
+              showMessage('<p class="error_message">検索文字が入力されていません。</p>')
+              break;
+            case 429:
+              showMessage('<p class="error_message">リクエスト過多です。しばらく時間を置いてからお試しください。</p>')
+              break;
+            default:
+              showMessage('<p class="error_message">予期せぬエラーが発生しました。</p>')
+          }
+        }
+
+        // メッセージの表示
+        function showMessage(message) {
           $('.message').append(message);
         }
 
@@ -152,7 +152,7 @@
           );
           if (pageData.count === 0) {
             resetPage();
-            errorMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+            showMessage('検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
           } else if (pageData.pageCount === 1) {
             beDisabled($('.btn-item'));
           } else if (pageData.page === 1) {
