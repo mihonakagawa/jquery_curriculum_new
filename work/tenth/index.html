@@ -41,10 +41,10 @@
           Ajax(keyword, currentPage);
         });
 
-        //「 次へ」をクリックした時
+        //「 次へ」ボタンをクリックした時
         $(document).on('click', '[data-js="page-next"]', function (e) {
-          var keyword = $('.search__text__input').val();
-          var currentPage = $('.counter-current').text();
+          keyword = $('.search__text__input').val();
+          currentPage = $('.counter-current').text();
           currentPage++
           if ($('[data-js="page-next"]').hasClass('disabled')) {
             return false;
@@ -57,8 +57,8 @@
 
         // 「前へ」ボタンをクリックした時
         $(document).on('click', '[data-js="page-prev"]', function (e) {
-          var keyword = $('.search__text__input').val();
-          var currentPage = $('.counter-current').text();
+          keyword = $('.search__text__input').val();
+          currentPage = $('.counter-current').text();
           currentPage--
           if ($('[data-js="page-prev"]').hasClass('disabled')) {
             return false;
